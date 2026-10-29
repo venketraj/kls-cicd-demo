@@ -45,7 +45,6 @@
 
   <script>
     const $ = (id) => document.getElementById(id);
-    let lastContent = null;
     let version = null;
 
     // Cache-busting query so phones see a new deploy without refreshing (GitHub Pages caches for 10 min).
@@ -69,42 +68,42 @@
         : '⚠️ Manual deploy · no record of who shipped this, or when';
     }
 
-    async function refresh() {
-      let content;
+    async function load() {
       try {
-        content = await fetchJson('content.json');
-      } catch (err) {
-        // Only show the broken page if we never loaded; a flaky phone network shouldn't look like a bad deploy.
-        if (!lastContent) {
-          document.body.classList.add('broken');
-          $('emoji').textContent = '💥';
-          $('headline').textContent = 'This site is broken';
-          $('subtitle').textContent = err.message;
-        }
-        return;
-      }
-      version = await fetchJson('version.json').catch(() => null);
-
-      const json = JSON.stringify(content);
-      if (json !== lastContent) {
-        if (lastContent) {
-          $('banner').classList.add('show');
-          setTimeout(() => $('banner').classList.remove('show'), 5000);
-          $('app').classList.remove('flash');
-          void $('app').offsetWidth; // restart the animation
-          $('app').classList.add('flash');
-        }
-        lastContent = json;
-        document.body.classList.remove('broken');
+        const content = await fetchJson('content.json');
         $('emoji').textContent = content.emoji || '';
         $('headline').textContent = content.headline;
         $('subtitle').textContent = content.subtitle || '';
+      } catch (err) {
+        document.body.classList.add('broken');
+        $('emoji').textContent = '💥';
+        $('headline').textContent = 'This site is broken';
+        $('subtitle').textContent = err.message;
       }
+      version = await fetchJson('version.json').catch(() => null);
+      renderVersion();
+
+      if (new URLSearchParams(location.search).has('deploy')) {
+        history.replaceState(null, '', location.pathname);
+        $('banner').classList.add('show');
+        setTimeout(() => $('banner').classList.remove('show'), 5000);
+        $('app').classList.add('flash');
+      }
+    }
+
+    // A new deploy may change the HTML and JS too, so reload the whole page. The new URL dodges the cached HTML.
+    async function poll() {
+      const latest = await fetchJson('version.json').catch(() => null);
+      if (latest && version && latest.run !== version.run) {
+        location.replace(`${location.pathname}?deploy=${latest.run}`);
+        return;
+      }
+      version = latest || version; // a flaky phone network shouldn't wipe what we show
       renderVersion();
     }
 
-    refresh();
-    setInterval(refresh, 4000);
+    load();
+    setInterval(poll, 4000);
   </script>
 </body>
 </html>
