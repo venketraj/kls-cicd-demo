@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo Stopwatch</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-content: center; gap: 48px; background: #0f172a; color: #f8fafc;
+           font: 20px system-ui, sans-serif; text-align: center; }
+    .timers { display: flex; gap: 64px; flex-wrap: wrap; justify-content: center; }
+    .t { cursor: pointer; padding: 24px 40px; border-radius: 24px; border: 3px solid #334155; }
+    .t.running { border-color: #22c55e; }
+    .t h2 { margin: 0; font-size: 28px; color: #94a3b8; }
+    .t output { display: block; font: 700 120px/1.1 ui-monospace, Consolas, monospace; }
+    #manual output { color: #f87171; } #pipeline output { color: #4ade80; }
+    p { color: #64748b; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div class="timers">
+    <div class="t" id="manual"><h2>MANUAL</h2><output>00:00</output></div>
+    <div class="t" id="pipeline"><h2>PIPELINE</h2><output>00:00</output></div>
+  </div>
+  <p>M = start/stop manual · P = start/stop pipeline · R = reset both · or click a timer</p>
+  <script>
+    const timers = {};
+    for (const id of ['manual', 'pipeline']) {
+      const el = document.getElementById(id);
+      timers[id] = { el, out: el.querySelector('output'), start: 0, elapsed: 0, running: false };
+      el.onclick = () => toggle(id);
+    }
+    const fmt = (ms) => { const s = Math.floor(ms / 1000); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+    function toggle(id) {
+      const t = timers[id];
+      if (t.running) t.elapsed += Date.now() - t.start; else t.start = Date.now();
+      t.running = !t.running;
+      t.el.classList.toggle('running', t.running);
+    }
+    document.onkeydown = (e) => {
+      const k = e.key.toLowerCase();
+      if (k === 'm') toggle('manual');
+      if (k === 'p') toggle('pipeline');
+      if (k === 'r') for (const t of Object.values(timers)) { t.running = false; t.elapsed = 0; t.el.classList.remove('running'); }
+    };
+    setInterval(() => { for (const t of Object.values(timers)) t.out.textContent = fmt(t.elapsed + (t.running ? Date.now() - t.start : 0)); }, 200);
+  </script>
+</body>
+</html>

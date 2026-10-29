@@ -1,0 +1,8 @@
+{
+  "name": "kls-cicd-demo",
+  "private": true,
+  "description": "CI/CD in Action: a tiny site deployed to GitHub Pages by GitHub Actions",
+  "scripts": {
+    "test": "node --test"
+  }
+}

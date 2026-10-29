@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CI/CD in Action</title>
+  <style>
+    :root { --bg: #0f172a; --fg: #f8fafc; --muted: #94a3b8; --card: #1e293b; --ok: #22c55e; --bad: #ef4444; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 24px 16px; background: var(--bg); color: var(--fg); text-align: center;
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    #emoji { font-size: 72px; line-height: 1; }
+    h1 { font-size: clamp(32px, 9vw, 64px); line-height: 1.1; margin: 16px 0 8px; overflow-wrap: anywhere; }
+    #subtitle { color: var(--muted); font-size: 18px; margin: 0 0 32px; max-width: 32ch; }
+    #version {
+      background: var(--card); border-radius: 12px; padding: 12px 16px; font-size: 14px; color: var(--muted); max-width: 100%;
+    }
+    #version:empty { display: none; }
+    #version b { color: var(--fg); }
+    #version a { color: var(--ok); }
+    .live { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); margin-right: 6px; animation: pulse 2s infinite; }
+    #banner {
+      position: fixed; top: 0; left: 0; right: 0; padding: 14px 16px; font-weight: 700; background: var(--ok); color: #052e16;
+      transform: translateY(-100%); transition: transform .4s;
+    }
+    #banner.show { transform: none; }
+    body.broken { --bg: #450a0a; }
+    body.broken #version { color: #fecaca; }
+    .flash { animation: flash 1.2s; }
+    @keyframes pulse { 50% { opacity: .3; } }
+    @keyframes flash { 0% { transform: scale(.8); opacity: 0; } 60% { transform: scale(1.08); } 100% { transform: none; opacity: 1; } }
+  </style>
+</head>
+<body>
+  <div id="banner" role="status">🚀 New version just deployed!</div>
+  <main id="app" aria-live="polite">
+    <div id="emoji">⏳</div>
+    <h1 id="headline">Loading…</h1>
+    <p id="subtitle"></p>
+  </main>
+  <div id="version"></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let lastContent = null;
+    let version = null;
+
+    // Cache-busting query so phones see a new deploy without refreshing (GitHub Pages caches for 10 min).
+    const fetchJson = (file) => fetch(`${file}?t=${Date.now()}`, { cache: 'no-store' }).then((r) => {
+      if (!r.ok) throw new Error(`${file}: HTTP ${r.status}`);
+      return r.json();
+    });
+
+    function ago(iso) {
+      const s = Math.max(0, Math.round((Date.now() - new Date(iso)) / 1000));
+      return s < 60 ? `${s}s ago` : s < 3600 ? `${Math.floor(s / 60)} min ago` : new Date(iso).toLocaleString();
+    }
+
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+    function renderVersion() {
+      const v = version && Object.fromEntries(Object.entries(version).map(([k, val]) => [k, esc(val)]));
+      $('version').innerHTML = v
+        ? `<span class="live"></span>Deploy <b>#${v.run}</b> · commit <b>${v.commit}</b> · by <b>${v.actor}</b> · ${ago(version.deployedAt)}<br>
+           “${v.message}” · <a href="${v.runUrl}" target="_blank" rel="noopener">see the pipeline run</a>`
+        : '⚠️ Manual deploy · no record of who shipped this, or when';
+    }
+
+    async function refresh() {
+      let content;
+      try {
+        content = await fetchJson('content.json');
+      } catch (err) {
+        // Only show the broken page if we never loaded; a flaky phone network shouldn't look like a bad deploy.
+        if (!lastContent) {
+          document.body.classList.add('broken');
+          $('emoji').textContent = '💥';
+          $('headline').textContent = 'This site is broken';
+          $('subtitle').textContent = err.message;
+        }
+        return;
+      }
+      version = await fetchJson('version.json').catch(() => null);
+
+      const json = JSON.stringify(content);
+      if (json !== lastContent) {
+        if (lastContent) {
+          $('banner').classList.add('show');
+          setTimeout(() => $('banner').classList.remove('show'), 5000);
+          $('app').classList.remove('flash');
+          void $('app').offsetWidth; // restart the animation
+          $('app').classList.add('flash');
+        }
+        lastContent = json;
+        document.body.classList.remove('broken');
+        $('emoji').textContent = content.emoji || '';
+        $('headline').textContent = content.headline;
+        $('subtitle').textContent = content.subtitle || '';
+      }
+      renderVersion();
+    }
+
+    refresh();
+    setInterval(refresh, 4000);
+  </script>
+</body>
+</html>
