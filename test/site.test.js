@@ -17,6 +17,22 @@ test('headline is present and fits on a phone screen', () => {
   assert.ok(headline.length <= 40, `headline is ${headline.length} chars, max is 40`);
 });
 
+test('call-to-action text and link are set and fit on a phone', () => {
+  const { ctaText, ctaUrl } = JSON.parse(read('content.json'));
+  assert.strictEqual(ctaText, '⭐ Get the starter repo');
+  assert.ok([...ctaText].length <= 25, `ctaText is ${[...ctaText].length} chars, max is 25`);
+  assert.strictEqual(ctaUrl, 'https://github.com/venketraj/kls-cicd-demo');
+});
+
+test('call-to-action opens in a new tab, is filled from content.json and is tappable', () => {
+  const html = read('index.html');
+  assert.match(html, /<a id="cta"[^>]*target="_blank"[^>]*rel="noopener"/);
+  assert.match(html, /\$\('cta'\)\.textContent = content\.ctaText/);
+  assert.match(html, /\$\('cta'\)\.href = content\.ctaUrl/);
+  const height = Number(html.match(/#cta\s*{[^}]*min-height:\s*(\d+)px/)?.[1]);
+  assert.ok(height >= 44, `#cta min-height is ${height}px, min is 44`);
+});
+
 test('index.html has a title', () => {
   assert.match(read('index.html'), /<title>[^<]+<\/title>/);
 });
