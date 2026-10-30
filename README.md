@@ -10,6 +10,12 @@ git push ──▶ Run tests ──▶ Deploy ──▶ live on your phone
                  └─ fail? deploy is skipped, production stays safe
 ```
 
+## Presentation
+
+`CI-CD-in-Action.pptx` is a 15-slide, 40-minute seminar titled **CI/CD in Action: From code to deployment**. It introduces deployment with a food-delivery analogy, then covers the shift from Waterfall and Agile to DevOps, continuous integration, continuous delivery, and continuous deployment.
+
+The final section explains why reliable delivery and pipeline security matter, then demonstrates three approaches: manual deployment, a GitHub Actions pipeline that blocks a broken release, and an AI agent adding the starter-repo button while following `AGENTS.md`. It closes with discussion questions and a homework prompt.
+
 ## Homework: make it yours (10 minutes, free)
 
 1. Click **Fork** (top right).
@@ -29,5 +35,6 @@ git push ──▶ Run tests ──▶ Deploy ──▶ live on your phone
 | `AGENTS.md` | Playbook for AI coding agents (requirement → test → ship) |
 | `requirements/` | Business requirements for an agent to implement |
 | `demo/` | Presenter material: runbook, manual-deploy checklist, stopwatch |
+| `CI-CD-in-Action.pptx` | 15-slide seminar deck for the 40-minute CI/CD presentation |
 
 Run the tests locally with `npm test` (Node 22+, nothing to install).
