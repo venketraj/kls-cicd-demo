@@ -52,6 +52,7 @@ Follow `demo/MANUAL_DEPLOY.md`. Stopwatch **M**. End on the red "This site is br
    - **GitHub Copilot (Free plan works)**: Chat panel → **Agent** mode. It reads `AGENTS.md`. (The Free plan has a monthly request cap, so do one rehearsal at most.)
 4. Narrate as it works: reading the requirement → reading the code → editing → **writing tests** → `npm test` → commit `REQ-001: …` → push.
    Approve its commands when it asks. That's the *"human in the loop"* point.
+   If someone asks whether that was real: *"That was Claude Code running for real. I only pre-approved edits, tests and git push, and the terminal shows a condensed view of its actions."*
 5. Same pipeline runs → phones get a **⭐ Get the starter repo** button. Tap it = homework.
    (No phone? The homework slide uses `demo/qr-starter-repo.png`.)
 6. Close on slide 14: *"If a robot can test, ship and roll back your code… what is your job?"*
