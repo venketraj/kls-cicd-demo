@@ -17,6 +17,20 @@
    - Browser tab: live site
 6. Increase the font size in the VS Code terminal and the browser (Ctrl +). People at the back need to read it.
 
+## Run all three parts
+
+From a clean `main` branch in PowerShell, run:
+
+```powershell
+.\demo\run-demo.ps1
+```
+
+The script starts Part 1 immediately using a temporary local copy, so the source remains at **Hello KLS!**. It opens the broken page in your browser and waits for Enter. It then asks before Part 2, which pushes an intentionally invalid `content.json` to `main`; wait for **Run tests** to fail and **Deploy** to be skipped, then press Enter so the script repairs the JSON and pushes the passing version. A recovery step restores valid content if Part 2 is interrupted.
+
+The script asks separately before Part 3. It opens the requirement when the `code` command is available and prints the prompt for Copilot Agent or Claude Code. The coding agent still runs interactively; tell it not to commit or push. After you confirm its edits are done, the script runs tests and checks the CTA values before committing and pushing.
+
+The Part 2 and Part 3 confirmations publish commits to `origin/main` and trigger GitHub Actions. You need Git authentication, Node.js/npm, Python, and the `main` branch at the original baseline. The script opens the Actions page after each push; it does not require the GitHub CLI.
+
 ## Part 1: the old way (slide 10)
 
 Follow `demo/MANUAL_DEPLOY.md`. Stopwatch **M**. End on the red "This site is broken" page.
