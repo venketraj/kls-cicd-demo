@@ -62,11 +62,12 @@ Follow `demo/MANUAL_DEPLOY.md`. Stopwatch **M**. End on the red "This site is br
 2. Show `AGENTS.md`: *"This is the team's playbook: analyse, research, plan, develop, test, ship."*
 3. Open your agent and paste:
    > Implement requirements/REQ-001-call-to-action.md following AGENTS.md.
+   When using `demo/run-demo.ps1`, use the prompt it prints and tell the agent not to commit or push; the script handles those steps after its checks.
    - **Claude Code**: in the VS Code terminal run `claude`, or use the Claude Code extension panel. It reads `CLAUDE.md` → `AGENTS.md` automatically.
    - **GitHub Copilot (Free plan works)**: Chat panel → **Agent** mode. It reads `AGENTS.md`. (The Free plan has a monthly request cap, so do one rehearsal at most.)
-4. Narrate as it works: reading the requirement → reading the code → editing → **writing tests** → `npm test` → commit `REQ-001: …` → push.
-   Approve its commands when it asks. That's the *"human in the loop"* point.
-   If someone asks whether that was real: *"That was Claude Code running for real. I only pre-approved edits, tests and git push, and the terminal shows a condensed view of its actions."*
+4. Narrate as it works: reading the requirement → reading the code → editing → **writing tests** → `npm test`. With the script, confirm when it is done; the script verifies, commits `REQ-001: …`, and pushes.
+   Review and approve the agent's edits. That's the *"human in the loop"* point.
+   If someone asks whether that was real: *"That was Claude Code running for real. I reviewed its edits, and the demo script ran the tests and handled the push."*
 5. Same pipeline runs → phones get a **⭐ Get the starter repo** button. Tap it = homework.
    (No phone? The homework slide uses `demo/qr-starter-repo.png`.)
 6. Close on slide 14: *"If a robot can test, ship and roll back your code… what is your job?"*
