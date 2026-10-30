@@ -23,7 +23,7 @@ Follow `demo/MANUAL_DEPLOY.md`. Stopwatch **M**. End on the red "This site is br
 
 ## Part 2: the pipeline (slide 11)
 
-1. Show the QR code: *"Scan it. You're production now."* Everyone sees **Hello KLS!**.
+1. Show the QR code (`demo/qr-live-site.png`): *"Scan it. You're production now."* Everyone sees **Hello KLS!**.
 2. Stopwatch **P**. Push the *same broken change*:
    ```powershell
    git commit -am "Change headline"
@@ -53,6 +53,7 @@ Follow `demo/MANUAL_DEPLOY.md`. Stopwatch **M**. End on the red "This site is br
 4. Narrate as it works: reading the requirement → reading the code → editing → **writing tests** → `npm test` → commit `REQ-001: …` → push.
    Approve its commands when it asks. That's the *"human in the loop"* point.
 5. Same pipeline runs → phones get a **⭐ Get the starter repo** button. Tap it = homework.
+   (No phone? The homework slide uses `demo/qr-starter-repo.png`.)
 6. Close on slide 14: *"If a robot can test, ship and roll back your code… what is your job?"*
    Your answer: writing good requirements, reviewing, and owning the pipeline that keeps the robot honest.
 
