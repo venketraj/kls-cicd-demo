@@ -17,6 +17,21 @@ test('headline is present and fits on a phone screen', () => {
   assert.ok(headline.length <= 40, `headline is ${headline.length} chars, max is 40`);
 });
 
+test('starter repo CTA content is configurable and fits on one line', () => {
+  const content = JSON.parse(read('content.json'));
+  assert.equal(content.ctaText, '⭐ Get the starter repo');
+  assert.equal(content.ctaUrl, 'https://github.com/venketraj/kls-cicd-demo');
+  assert.ok(content.ctaText.length <= 25, 'CTA text must be 25 characters or fewer');
+});
+
+test('starter repo CTA appears under the subtitle as an accessible tap target', () => {
+  const html = read('index.html');
+  assert.match(html, /<p id="subtitle"><\/p>\s*<a id="cta"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/);
+  assert.match(html, /min-height:\s*44px/);
+  assert.match(html, /\$\('cta'\)\.textContent\s*=\s*content\.ctaText/);
+  assert.match(html, /\$\('cta'\)\.href\s*=\s*content\.ctaUrl/);
+});
+
 test('index.html has a title', () => {
   assert.match(read('index.html'), /<title>[^<]+<\/title>/);
 });
